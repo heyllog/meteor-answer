@@ -2,7 +2,9 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import theme from '../themes/theme';
-import Button from "./reusable/Button";
+import Button from './reusable/Button';
+import { NavLink } from 'react-router-dom';
+import Wrapper from './reusable/Wrapper';
 
 const Logo = ({ width, height, color }) => (
   <svg width={width} height={height} viewBox='0 0 178 43'>
@@ -23,25 +25,40 @@ const Navbar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px 25px 30px;
-  
-  a {
-    margin-left: 1.5rem;
-  }
+  padding: 1rem 0;
+`;
 
-  svg {
-    margin-right: auto;
-    margin-bottom: 1.1rem;
+const LogoLink = styled.div`
+  margin-right: auto;
+  margin-bottom: 1rem;
+`;
+
+const StandardLink = styled.span`
+  margin-right: 1.5rem;
+  transition: 0.3s ease;
+
+  &:hover {
+    color: ${theme.orange};
   }
 `;
 
 const Header = () => {
   return (
-    <Navbar>
-      <Logo width='143px' height='35px' color={theme.primary} />
-      <a>Questions</a>
-      <Button>Sign In</Button>
-    </Navbar>
+    <Wrapper>
+      <Navbar>
+        <LogoLink>
+          <NavLink to='/'>
+            <Logo width='143px' height='35px' color={theme.primary} />
+          </NavLink>
+        </LogoLink>
+        <NavLink to='/questions'>
+          <StandardLink>Questions</StandardLink>
+        </NavLink>
+        <NavLink to='/signin'>
+          <Button>Sign In</Button>
+        </NavLink>
+      </Navbar>
+    </Wrapper>
   );
 };
 

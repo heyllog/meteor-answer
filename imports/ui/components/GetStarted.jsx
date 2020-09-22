@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Lottie from 'react-lottie';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import { fadeInUp } from 'react-animations';
 
 import Button from './reusable/Button';
-import animationData from '../../../public/user.json';
+import animationData from '../lottie/user.json';
+import { NavLink } from 'react-router-dom';
+import Wrapper from './reusable/Wrapper';
 
 const defaultOptions = {
   loop: true,
@@ -42,16 +44,26 @@ const RightSide = styled.div`
   }
 `;
 
+useEffect(() => {
+  return ;
+}, []);
+
 const GetStarted = () => {
   return (
-    <MainBadge>
-      <RightSide>
-        <h1>Welcome to Meteor!</h1>
-        <p>Meteor is a platform where you can ask and answer questions from all over the world. </p>
-        <Button>Get Started</Button>
-      </RightSide>
-      <Lottie options={defaultOptions} height={500} width={500} />
-    </MainBadge>
+    <Wrapper>
+      <MainBadge>
+        <RightSide>
+          <h1>Welcome to Meteor!</h1>
+          <p>
+            Meteor is a platform where you can ask and answer questions from all over the world.{' '}
+          </p>
+          <NavLink to='/signup'>
+            <Button>Get Started</Button>
+          </NavLink>
+        </RightSide>
+        <Lottie options={defaultOptions} height={500} width={500} />
+      </MainBadge>
+    </Wrapper>
   );
 };
 

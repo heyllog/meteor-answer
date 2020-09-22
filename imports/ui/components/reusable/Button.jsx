@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import theme from '../../themes/theme';
 
-const PrimaryButton = styled.a`
+const PrimaryButton = styled.span`
   padding: 15px 20px;
   border-radius: 8px;
   color: ${theme.background};
