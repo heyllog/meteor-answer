@@ -5,15 +5,15 @@ import { NavLink } from 'react-router-dom'
 import theme from '../../themes/theme'
 
 const Container = styled.div`
-  margin: 16px auto;
-  padding: 30px;
+  margin: 0 auto;
+  padding: 1rem 0;
   background-color: #fff;
-  border: 1px solid ${theme.primary};
-  border-radius: 8px;
+  //border: 1px solid ${theme.primary};
+  border-radius: 0.5rem;
 
-  h2 {
-    margin-bottom: 16px;
-    padding-bottom: 8px;
+  h3 {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid ${theme.primary};
     cursor: pointer;
     transition: 0.3s color;
@@ -34,9 +34,12 @@ const QuestionPreview = () => {
   return (
     <Container>
       <NavLink to='/questions/1'>
-        <h2>Lorem ipsum dolor.</h2>
+        <h3>Lorem ipsum dolor.</h3>
       </NavLink>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur fugit perferendis suscipit! Assumenda, maxime, officiis?</p>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur fugit perferendis suscipit! Assumenda,
+        maxime, officiis?
+      </p>
     </Container>
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import { NavLink, useLocation } from 'react-router-dom'
 
@@ -47,7 +47,50 @@ const StandardLink = styled.span`
   }
 `
 
+const SearchButton = styled.button`
+  margin-top: 2px;
+  margin-right: 15px;
+
+  outline: none;
+  border: none;
+  background-color: ${theme.background};
+  cursor: pointer;
+
+  svg path {
+    fill: ${theme.primary};
+  }
+
+  &:hover {
+    svg path {
+      fill: ${theme.orange};
+    }
+  }
+`
+
+const SearchBar = styled.input`
+  width: 300px;
+  display: block;
+  margin-left: auto;
+  margin-top: -10px;
+  margin-right: 25px;
+  padding: 0.5rem;
+
+  font-family: 'Comfortaa', sans-serif;
+  outline: none;
+  border: none;
+  font-size: 1rem;
+  border-bottom: 1px solid ${theme.primary};
+
+  @media all and (max-width: 600px) {
+    width: calc(100% - 40px);
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+`
+
 const Header = () => {
+  const [search, isSearch] = useState(false)
+
   const { pathname } = useLocation()
 
   return (
@@ -59,6 +102,18 @@ const Header = () => {
           </NavLink>
         </LogoLink>
 
+        <SearchButton onClick={() => isSearch(!search)}>
+          <svg width='16px' height='16px' viewBox='0 0 612.08 612.08'>
+            <path
+              d='M237.927,0C106.555,0,0.035,106.52,0.035,237.893c0,131.373,106.52,237.893,237.893,237.893
+		c50.518,0,97.368-15.757,135.879-42.597l0.028-0.028l176.432,176.433c3.274,3.274,8.48,3.358,11.839,0l47.551-47.551
+		c3.274-3.274,3.106-8.703-0.028-11.838L433.223,373.8c26.84-38.539,42.597-85.39,42.597-135.907C475.82,106.52,369.3,0,237.927,0z
+		 M237.927,419.811c-100.475,0-181.918-81.443-181.918-181.918S137.453,55.975,237.927,55.975s181.918,81.443,181.918,181.918
+		S338.402,419.811,237.927,419.811z'
+            />
+          </svg>
+        </SearchButton>
+
         {pathname === '/questions' || pathname === '/questions/1' ? (
           <NavLink to='/questions'>
             <StandardLink>Questions</StandardLink>
@@ -69,6 +124,7 @@ const Header = () => {
           </NavLink>
         )}
       </Navbar>
+      {search && <SearchBar placeholder='Search...' />}
     </Wrapper>
   )
 }

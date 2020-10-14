@@ -46,7 +46,7 @@ const QuestionBox = styled.div`
   margin: 16px auto;
   padding: 30px;
   background-color: #fff;
-  border: 1px solid ${theme.primary};
+  //border: 1px solid ${theme.primary};
   border-radius: 8px;
 
   h2 {

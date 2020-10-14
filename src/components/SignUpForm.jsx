@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from '@emotion/styled'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import theme from '../themes/theme'
 import Button from './reusable/Button'
@@ -70,6 +70,12 @@ const HaveAccount = styled.p`
   }
 `
 
+const IncorrectBadge = styled.p`
+  margin-left: 30px;
+  margin-bottom: 20px;
+  color: ${theme.errorRed};
+`
+
 const SignUpButton = styled.div`
   display: inline-block;
   width: 100%;
@@ -78,24 +84,50 @@ const SignUpButton = styled.div`
 `
 
 const SignUpForm = () => {
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [incorrectData, setIncorrectData] = useState('')
+
+  const handleClick = () => {
+    if (!/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email)) {
+      setIncorrectData('Incorrect email')
+    } else if (password < 7) {
+      setIncorrectData('Password should contain at least 7 characters')
+    } else if (password !== confirmPassword) {
+      setIncorrectData('Passwords do not match')
+    } else {
+      navigate('/questions')
+    }
+  }
+
   return (
     <Form>
       <h2>Create your account</h2>
-      <form>
-        <input type='text' className='email' placeholder='EMAIL' />
-        <br />
-        <input type='password' className='pwd' placeholder='PASSWORD' />
-        <br />
-        <input type='password' className='pwd' placeholder='CONFIRM PASSWORD' />
-      </form>
+      {incorrectData && <IncorrectBadge>{incorrectData}</IncorrectBadge>}
+      <input type='text' className='email' placeholder='EMAIL' onChange={event => setEmail(event.target.value)} />
+      <br />
+      <input
+        type='password'
+        className='pwd'
+        placeholder='PASSWORD'
+        onChange={event => setPassword(event.target.value)}
+      />
+      <br />
+      <input
+        type='password'
+        className='pwd'
+        placeholder='CONFIRM PASSWORD'
+        onChange={event => setConfirmPassword(event.target.value)}
+      />
+
       <NavLink to='/signin' className='link'>
         <HaveAccount>Already have an account?</HaveAccount>
       </NavLink>
       <br />
       <SignUpButton>
-        <NavLink to='/questions'>
-          <Button>Sign Up</Button>
-        </NavLink>
+        <Button onClick={handleClick}>Sign Up</Button>
       </SignUpButton>
     </Form>
   )

@@ -3,17 +3,20 @@ import styled from '@emotion/styled'
 
 import theme from '../../themes/theme'
 
-const PrimaryButton = styled.span`
+const PrimaryButton = styled.button`
   padding: 15px 20px;
+  border: none;
   border-radius: 8px;
   color: ${theme.background};
   background-color: ${theme.button};
+  outline: none;
+  font-family: 'Comfortaa', sans-serif;
 
   &:hover {
     background-color: ${theme.buttonOnHover};
   }
 `
 
-const Button = ({ children }) => <PrimaryButton>{children}</PrimaryButton>
+const Button = ({ children, onClick }) => <PrimaryButton onClick={onClick}>{children}</PrimaryButton>
 
 export default Button

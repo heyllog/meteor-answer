@@ -4,6 +4,7 @@ import { Global, css } from '@emotion/core'
 
 import theme from './themes/theme'
 import Header from './components/Header'
+
 import StartPage from './pages/StartPage'
 import NotFound from './pages/NotFound'
 import SignInPage from './pages/SignInPage'
@@ -39,7 +40,7 @@ const routesConfig = [
 ]
 
 const App = () => {
-  let routes = useRoutes(routesConfig)
+  const routes = useRoutes(routesConfig)
 
   return (
     <>

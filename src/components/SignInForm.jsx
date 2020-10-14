@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import { NavLink } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import theme from '../themes/theme'
 import Button from './reusable/Button'
@@ -70,6 +71,12 @@ const HaveAccount = styled.p`
   }
 `
 
+const IncorrectBadge = styled.p`
+  margin-left: 30px;
+  margin-bottom: 20px;
+  color: ${theme.errorRed};
+`
+
 const SignUpButton = styled.div`
   display: inline-block;
   width: 100%;
@@ -78,22 +85,39 @@ const SignUpButton = styled.div`
 `
 
 const SignInForm = () => {
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [incorrectData, setIncorrectData] = useState('')
+
+  const handleClick = () => {
+    if (!/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email)) {
+      setIncorrectData('Incorrect email')
+    } else if (password < 7) {
+      setIncorrectData('Password should contain at least 7 characters')
+    } else {
+      navigate('/questions')
+    }
+  }
+
   return (
     <Form>
       <h2>Continue to Meteor</h2>
-      <form>
-        <input type='text' className='email' placeholder='EMAIL' />
-        <br />
-        <input type='password' className='pwd' placeholder='PASSWORD' />
-      </form>
+      {incorrectData && <IncorrectBadge>{incorrectData}</IncorrectBadge>}
+      <input type='email' className='email' placeholder='EMAIL' onChange={event => setEmail(event.target.value)} />
+      <br />
+      <input
+        type='password'
+        className='pwd'
+        placeholder='PASSWORD'
+        onChange={event => setPassword(event.target.value)}
+      />
       <NavLink to='/signup' className='link'>
         <HaveAccount>New to Meteor? Create an account.</HaveAccount>
       </NavLink>
       <br />
       <SignUpButton>
-        <NavLink to='/questions'>
-          <Button>Sign In</Button>
-        </NavLink>
+        <Button onClick={handleClick}>Sign In</Button>
       </SignUpButton>
     </Form>
   )

@@ -6,6 +6,7 @@ const theme = {
   buttonOnHover: '#7679fa',
   orange: '#FF6A3E',
   formGray: '#858585',
+  errorRed: '#e92730',
 }
 
 export default theme
