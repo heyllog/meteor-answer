@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from '@emotion/styled'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import theme from '../themes/theme'
 import Button from './reusable/Button'
@@ -67,31 +67,31 @@ const SearchButton = styled.button`
   }
 `
 
-const SearchBar = styled.input`
-  width: 300px;
-  display: block;
-  margin-left: auto;
-  margin-top: -10px;
-  margin-right: 25px;
-  padding: 0.5rem;
-
-  font-family: 'Comfortaa', sans-serif;
-  outline: none;
-  border: none;
-  font-size: 1rem;
-  border-bottom: 1px solid ${theme.primary};
-
-  @media all and (max-width: 600px) {
-    width: calc(100% - 40px);
-    margin-left: 20px;
-    margin-right: 20px;
-  }
-`
+// const SearchBar = styled.input`
+//   width: 300px;
+//   display: block;
+//   margin-left: auto;
+//   margin-top: -10px;
+//   margin-right: 25px;
+//   padding: 0.5rem;
+//
+//   font-family: 'Comfortaa', sans-serif;
+//   outline: none;
+//   border: none;
+//   font-size: 1rem;
+//   border-bottom: 1px solid ${theme.primary};
+//
+//   @media all and (max-width: 600px) {
+//     width: calc(100% - 40px);
+//     margin-left: 20px;
+//     margin-right: 20px;
+//   }
+// `
 
 const Header = () => {
-  const [search, isSearch] = useState(false)
+  // const [search, isSearch] = useState(false)
 
-  const { pathname } = useLocation()
+  const navigate = useNavigate()
 
   return (
     <Wrapper>
@@ -102,7 +102,7 @@ const Header = () => {
           </NavLink>
         </LogoLink>
 
-        <SearchButton onClick={() => isSearch(!search)}>
+        <SearchButton onClick={() => navigate('/search')}>
           <svg width='16px' height='16px' viewBox='0 0 612.08 612.08'>
             <path
               d='M237.927,0C106.555,0,0.035,106.52,0.035,237.893c0,131.373,106.52,237.893,237.893,237.893
@@ -114,17 +114,27 @@ const Header = () => {
           </svg>
         </SearchButton>
 
-        {pathname === '/questions' || pathname === '/questions/1' ? (
-          <NavLink to='/questions'>
-            <StandardLink>Questions</StandardLink>
-          </NavLink>
+        {localStorage.getItem('auth') ? (
+          <>
+            <NavLink to='/questions'>
+              <StandardLink>Questions</StandardLink>
+            </NavLink>
+            <Button
+              onClick={() => {
+                localStorage.removeItem('auth')
+                navigate('/')
+              }}
+            >
+              Log out
+            </Button>
+          </>
         ) : (
           <NavLink to='/signin'>
             <Button>Sign In</Button>
           </NavLink>
         )}
       </Navbar>
-      {search && <SearchBar placeholder='Search...' />}
+      {/*{search && <SearchBar placeholder='Search...' />}*/}
     </Wrapper>
   )
 }

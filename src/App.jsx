@@ -1,4 +1,5 @@
 import React from 'react'
+import { RecoilRoot } from 'recoil'
 import { useRoutes } from 'react-router-dom'
 import { Global, css } from '@emotion/core'
 
@@ -11,6 +12,7 @@ import SignInPage from './pages/SignInPage'
 import QuestionsPage from './pages/QuestionsPage'
 import SignUpPage from './pages/SignUpPage'
 import QuestionPage from './pages/QuestionPage'
+import SearchPage from './pages/SearchPage'
 
 const routesConfig = [
   {
@@ -26,11 +28,15 @@ const routesConfig = [
     element: <SignInPage />,
   },
   {
+    path: '/search',
+    element: <SearchPage />,
+  },
+  {
     path: '/questions',
     element: <QuestionsPage />,
   },
   {
-    path: '/questions/1',
+    path: '/questions/:id',
     element: <QuestionPage />,
   },
   {
@@ -43,7 +49,7 @@ const App = () => {
   const routes = useRoutes(routesConfig)
 
   return (
-    <>
+    <RecoilRoot>
       <Global
         styles={css`
           @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap');
@@ -70,7 +76,7 @@ const App = () => {
 
       <Header />
       {routes}
-    </>
+    </RecoilRoot>
   )
 }
 

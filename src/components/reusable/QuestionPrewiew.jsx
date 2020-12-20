@@ -8,7 +8,6 @@ const Container = styled.div`
   margin: 0 auto;
   padding: 1rem 0;
   background-color: #fff;
-  //border: 1px solid ${theme.primary};
   border-radius: 0.5rem;
 
   h3 {
@@ -30,16 +29,13 @@ const Container = styled.div`
   }
 `
 
-const QuestionPreview = () => {
+const QuestionPreview = ({ question }) => {
   return (
     <Container>
-      <NavLink to='/questions/1'>
-        <h3>Lorem ipsum dolor.</h3>
+      <NavLink to={`/questions/${question.id}`}>
+        <h3>{question.shortcontent}</h3>
       </NavLink>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur fugit perferendis suscipit! Assumenda,
-        maxime, officiis?
-      </p>
+      <p>{question.content}</p>
     </Container>
   )
 }

@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled'
-import { NavLink } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import theme from '../themes/theme'
 import Button from './reusable/Button'
@@ -90,13 +89,46 @@ const SignInForm = () => {
   const [password, setPassword] = useState('')
   const [incorrectData, setIncorrectData] = useState('')
 
-  const handleClick = () => {
+  useEffect(() => {
+    if (localStorage.getItem('auth')) {
+      navigate('/questions')
+    }
+  }, [navigate])
+
+  const handleClick = async () => {
     if (!/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email)) {
       setIncorrectData('Incorrect email')
-    } else if (password < 7) {
-      setIncorrectData('Password should contain at least 7 characters')
-    } else {
-      navigate('/questions')
+      return
+    }
+
+    if (password.length < 6) {
+      setIncorrectData('Password should contain at least 6 characters')
+      return
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/post/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({
+          username: email,
+          password,
+        }),
+      })
+
+      const result = await response.text()
+
+      if (result === 'Success') {
+        localStorage.setItem('auth', `Basic ${window.btoa(`${email}:${password}`)}`)
+        navigate('/questions')
+      } else if (result === 'Error no user') {
+        setIncorrectData('Incorrect email or password')
+      }
+    } catch (e) {
+      console.error(e)
+      setIncorrectData('Server error')
     }
   }
 

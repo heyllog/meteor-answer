@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled'
 import { NavLink, useNavigate } from 'react-router-dom'
 
@@ -90,15 +90,51 @@ const SignUpForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [incorrectData, setIncorrectData] = useState('')
 
-  const handleClick = () => {
+  useEffect(() => {
+    if (localStorage.getItem('auth')) {
+      navigate('/questions')
+    }
+  }, [navigate])
+
+  const handleClick = async () => {
     if (!/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email)) {
       setIncorrectData('Incorrect email')
-    } else if (password < 7) {
-      setIncorrectData('Password should contain at least 7 characters')
-    } else if (password !== confirmPassword) {
+      return
+    }
+
+    if (password.length < 6) {
+      setIncorrectData('Password should contain at least 6 characters')
+      return
+    }
+
+    if (password !== confirmPassword) {
       setIncorrectData('Passwords do not match')
-    } else {
-      navigate('/questions')
+      return
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/post/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({
+          username: email,
+          password,
+        }),
+      })
+
+      const result = await response.text()
+
+      if (result === 'Success') {
+        localStorage.setItem('auth', `Basic ${window.btoa(`${email}:${password}`)}`)
+        navigate('/questions')
+      } else if (result === 'Already exist') {
+        setIncorrectData('User already exist')
+      }
+    } catch (e) {
+      console.error(e)
+      setIncorrectData('Server error')
     }
   }
 
