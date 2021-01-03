@@ -1,7 +1,7 @@
 import React from 'react'
 import Lottie from 'react-lottie'
 import styled from '@emotion/styled'
-import { keyframes } from '@emotion/core'
+import { keyframes } from '@emotion/react'
 import { fadeInUp } from 'react-animations'
 import { NavLink } from 'react-router-dom'
 
@@ -12,7 +12,7 @@ import Wrapper from './reusable/Wrapper'
 const defaultOptions = {
   loop: true,
   autoplay: true,
-  animationData: animationData,
+  animationData,
   rendererSettings: {
     preserveAspectRatio: 'xMidYMid slice',
   },
@@ -66,23 +66,21 @@ const RightSide = styled.div`
   }
 `
 
-const GetStarted = () => {
-  return (
-    <Wrapper>
-      <MainBadge>
-        <LeftSide>
-          <h1>Welcome to Meteor!</h1>
-          <p>Meteor is a platform where you can ask and answer questions from all over the world. </p>
-          <NavLink to='/signup'>
-            <Button>Get Started</Button>
-          </NavLink>
-        </LeftSide>
-        <RightSide>
-          <Lottie options={defaultOptions} />
-        </RightSide>
-      </MainBadge>
-    </Wrapper>
-  )
-}
+const GetStarted: React.FC = () => (
+  <Wrapper>
+    <MainBadge>
+      <LeftSide>
+        <h1>Welcome to Meteor!</h1>
+        <p>Meteor is a platform where you can ask and answer questions from all over the world. </p>
+        <NavLink to='/signup'>
+          <Button>Get Started</Button>
+        </NavLink>
+      </LeftSide>
+      <RightSide>
+        <Lottie options={defaultOptions} />
+      </RightSide>
+    </MainBadge>
+  </Wrapper>
+)
 
 export default GetStarted

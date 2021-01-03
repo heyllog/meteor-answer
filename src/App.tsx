@@ -1,11 +1,13 @@
 import React from 'react'
-import { RecoilRoot } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { useRoutes } from 'react-router-dom'
-import { Global, css } from '@emotion/core'
+import { ThemeProvider, Global, css } from '@emotion/react'
 
-import theme from './themes/theme'
+import themeConstants from './utils/theme'
+import { themeAtom } from './atoms/theme'
+import 'antd/dist/antd.css'
+
 import Header from './components/Header'
-
 import StartPage from './pages/StartPage'
 import NotFound from './pages/NotFound'
 import SignInPage from './pages/SignInPage'
@@ -45,11 +47,12 @@ const routesConfig = [
   },
 ]
 
-const App = () => {
+const App: React.FC = () => {
   const routes = useRoutes(routesConfig)
+  const themeType: string = useRecoilValue(themeAtom)
 
   return (
-    <RecoilRoot>
+    <ThemeProvider theme={themeConstants[themeType]}>
       <Global
         styles={css`
           @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap');
@@ -58,17 +61,27 @@ const App = () => {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: 0.3s background-color;
           }
 
           body {
             font-family: 'Comfortaa', sans-serif;
-            background-color: ${theme.background};
-            color: ${theme.primary};
+            background-color: ${themeConstants[themeType].background};
+            color: ${themeConstants[themeType].primary};
+          }
+
+          h1,
+          h2,
+          h3,
+          h4,
+          h5,
+          h6 {
+            color: ${themeConstants[themeType].primary};
           }
 
           a {
             cursor: pointer;
-            color: ${theme.primary};
+            color: ${themeConstants[themeType].primary};
             text-decoration: none;
           }
         `}
@@ -76,7 +89,7 @@ const App = () => {
 
       <Header />
       {routes}
-    </RecoilRoot>
+    </ThemeProvider>
   )
 }
 
