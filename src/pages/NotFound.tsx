@@ -1,7 +1,7 @@
 import React from 'react'
 import Lottie from 'react-lottie'
 import styled from '@emotion/styled'
-import { keyframes } from '@emotion/core'
+import { keyframes } from '@emotion/react'
 import { shake } from 'react-animations'
 
 import animationData from '../lottie/404.json'
@@ -26,7 +26,7 @@ const MainBadge = styled.div`
   animation: 1s ${Animation};
 `
 
-const NotFound = () => (
+const NotFound: React.FC = () => (
   <MainBadge>
     <Lottie options={defaultOptions} height={500} width={500} />
     <h1>404 Not Found</h1>

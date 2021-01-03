@@ -1,8 +1,6 @@
 import React from 'react'
 import SignInForm from '../components/SignInForm'
 
-const SignInPage = () => {
-  return <SignInForm />
-}
+const SignInPage: React.FC = () => <SignInForm />
 
 export default SignInPage

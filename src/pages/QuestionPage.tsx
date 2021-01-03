@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled'
+import { useTheme } from '@emotion/react'
 import { atom, selectorFamily, useRecoilValueLoadable, useRecoilState } from 'recoil'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import theme from '../themes/theme'
 import Wrapper from '../components/reusable/Wrapper'
+import { Colors } from '../utils/types'
 
-const AnswersBox = styled.div`
+const Form = styled.div`
   h1 {
     padding-left: 30px;
   }
@@ -17,50 +18,47 @@ const AnswersBox = styled.div`
     width: 90%;
     margin: 50px auto;
     border: none;
+    background-color: ${({ theme }: { theme: Colors }) => theme.background};
+
     &::placeholder {
       transform: translateY(0px);
       transition: 0.5s;
+      color: ${({ theme }: { theme: Colors }) => theme.placeholder};
     }
+
     &:hover,
     &:focus,
     &:active:focus {
-      color: ${theme.primary};
+      color: ${({ theme }: { theme: Colors }) => theme.primary};
       outline: none;
-      border-bottom: 1px solid ${theme.orange};
+      border-bottom: 1px solid ${({ theme }: { theme: Colors }) => theme.secondary};
+
       &::placeholder {
-        color: ${theme.orange};
+        color: ${({ theme }: { theme: Colors }) => theme.secondary};
         position: relative;
         transform: translateY(-20px);
       }
     }
   }
 
-  .email,
-  .pwd {
+  .answer {
     position: relative;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    color: ${theme.formGray};
+    border-bottom: 1px solid ${({ theme }: { theme: Colors }) => theme.placeholder};
+    color: ${({ theme }: { theme: Colors }) => theme.formGray};
     font-weight: lighter;
-    transition: 0.5s;
   }
 `
 
 const QuestionBox = styled.div`
   margin: 16px auto;
   padding: 30px;
-  background-color: #fff;
+  background-color: ${({ theme }: { theme: Colors }) => theme.background};
   border-radius: 8px;
 
   h2 {
     margin-bottom: 16px;
     padding-bottom: 8px;
-    border-bottom: 1px solid ${theme.primary};
-    cursor: pointer;
-    transition: 0.3s color;
-
-    &:hover {
-      color: ${theme.orange};
-    }
+    border-bottom: 1px solid ${({ theme }: { theme: Colors }) => theme.primary};
   }
 
   @media all and (max-width: 910px) {
@@ -73,8 +71,8 @@ const QuestionBox = styled.div`
 const AnswerBox = styled.h3`
   margin: 16px auto;
   padding: 30px;
-  background-color: #fff;
-  border: 1px solid ${theme.primary};
+  background-color: ${({ theme }: { theme: Colors }) => theme.background};
+  border: 1px solid ${({ theme }: { theme: Colors }) => theme.primary};
   border-radius: 8px;
 
   @media all and (max-width: 910px) {
@@ -95,20 +93,27 @@ const fetchQuestion = selectorFamily({
   key: 'currentQuestion',
   get: pathname => async ({ get }) => {
     get(questionTrigger)
-    const response = await fetch(`http://localhost:8080/${pathname.slice(11)}`, {
-      headers: {
-        Authorization: localStorage.getItem('auth'),
-      },
-    })
-    return response.json()
+
+    const requestHeaders: HeadersInit = new Headers()
+    requestHeaders.set('Authorization', localStorage.getItem('auth') as string)
+
+    if (pathname) {
+      const response = await fetch(`http://localhost:8080/${pathname.toString().slice(11)}`, {
+        headers: requestHeaders,
+      })
+      return response.json()
+    }
+
+    throw new Error('No pathname')
   },
 })
 
-const QuestionPage = () => {
+const QuestionPage: React.FC = () => {
   const [newAnswer, setNewAnswer] = useState('')
 
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const theme: any = useTheme()
 
   const { contents, state } = useRecoilValueLoadable(fetchQuestion(pathname))
   const [trigger, setTrigger] = useRecoilState(questionTrigger)
@@ -119,16 +124,17 @@ const QuestionPage = () => {
     }
   }, [navigate])
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
+
+    const requestHeaders: HeadersInit = new Headers()
+    requestHeaders.set('Authorization', localStorage.getItem('auth') as string)
+    requestHeaders.set('Content-Type', 'application/json;charset=utf-8')
 
     try {
       await fetch(`http://localhost:8080/post/${pathname.slice(11)}/add/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          Authorization: localStorage.getItem('auth'),
-        },
+        headers: requestHeaders,
         body: JSON.stringify({
           information: newAnswer,
         }),
@@ -136,22 +142,22 @@ const QuestionPage = () => {
 
       setTrigger(trigger + 1)
       setNewAnswer('')
-    } catch (e) {
-      console.error(e)
+    } catch (err) {
+      console.error(err)
     }
   }
 
   return (
     <Wrapper width='700px'>
-      <QuestionBox>
+      <QuestionBox theme={theme}>
         <h2>{contents.shortcontent}</h2>
         <p>{contents.content}</p>
       </QuestionBox>
-      <AnswersBox>
+      <Form theme={theme}>
         <form onSubmit={handleSubmit}>
           <input
             type='text'
-            className='email'
+            className='answer'
             placeholder='Write your answer...'
             value={newAnswer}
             onChange={({ target }) => setNewAnswer(target.value)}
@@ -161,11 +167,13 @@ const QuestionPage = () => {
         <h1>Answers: </h1>
         {state === 'hasValue' &&
           (contents.list.length > 0 ? (
-            contents.list.map(answer => <AnswerBox>{answer.information}</AnswerBox>)
+            contents.list.map((answer: { information: React.ReactNode }) => (
+              <AnswerBox theme={theme}>{answer.information}</AnswerBox>
+            ))
           ) : (
             <NoAnswers>There is no answers yet... Be first!</NoAnswers>
           ))}
-      </AnswersBox>
+      </Form>
     </Wrapper>
   )
 }

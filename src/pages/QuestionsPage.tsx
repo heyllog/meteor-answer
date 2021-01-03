@@ -3,10 +3,12 @@ import { useRecoilState, useRecoilValueLoadable, selector, atom } from 'recoil'
 import { useNavigate } from 'react-router-dom'
 import styled from '@emotion/styled'
 
-import { questionsAtom } from '../atoms/questions'
 import QuestionAsk from '../components/QuestionAsk'
 import QuestionPreview from '../components/reusable/QuestionPrewiew'
 import Wrapper from '../components/reusable/Wrapper'
+
+import { questionsAtom } from '../atoms/questions'
+import { Question } from '../utils/types'
 
 const Questions = styled.div`
   h2 {
@@ -27,24 +29,26 @@ const fetchLastQuestions = selector({
   key: 'lastQuestions',
   get: async ({ get }) => {
     get(lastQuestionsTrigger)
+
+    const requestHeaders: HeadersInit = new Headers()
+    requestHeaders.set('Authorization', localStorage.getItem('auth') as string)
+
     const response = await fetch('http://localhost:8080/top10', {
-      headers: {
-        Authorization: localStorage.getItem('auth'),
-      },
+      headers: requestHeaders,
     })
     return response.json()
   },
 })
 
-const QuestionsPage = () => {
+const QuestionsPage: React.FC = () => {
   const navigate = useNavigate()
-  const [questions, setQuestions] = useRecoilState(questionsAtom)
-  const { contents, state } = useRecoilValueLoadable(fetchLastQuestions)
+  const [questions, setQuestions]: any = useRecoilState(questionsAtom)
+  const { contents, state }: any = useRecoilValueLoadable(fetchLastQuestions)
   const [trigger, setTrigger] = useRecoilState(lastQuestionsTrigger)
 
   useEffect(() => {
     if (state === 'hasValue' && contents.length > 0) {
-      const content = [...contents]
+      const content: Question[] = [...contents]
       content.reverse()
       setQuestions(content)
     }
@@ -62,7 +66,8 @@ const QuestionsPage = () => {
         <QuestionAsk trigger={trigger} setTrigger={setTrigger} />
 
         <h2>Or read last questions: </h2>
-        {state === 'hasValue' && questions.map(question => <QuestionPreview key={question.id} question={question} />)}
+        {state === 'hasValue' &&
+          questions.map((question: Question) => <QuestionPreview key={question.id} question={question} />)}
       </Questions>
     </Wrapper>
   )

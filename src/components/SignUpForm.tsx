@@ -1,94 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import styled from '@emotion/styled'
+import { useTheme } from '@emotion/react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
-import theme from '../themes/theme'
 import Button from './reusable/Button'
+import Form from './reusable/Form'
+import SignButton from './reusable/SignButton'
+import HaveAccount from './reusable/HaveAccount'
+import IncorrectBadge from './reusable/IncorrectBadge'
 
-const Form = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
-
-  h2 {
-    padding: 30px;
-    font-weight: lighter;
-    text-transform: uppercase;
-    color: ${theme.primary};
-  }
-
-  input {
-    display: block;
-    height: 60px;
-    width: 90%;
-    margin: 0 auto;
-    border: none;
-    &::placeholder {
-      transform: translateY(0px);
-      transition: 0.5s;
-    }
-    &:hover,
-    &:focus,
-    &:active:focus {
-      color: ${theme.primary};
-      outline: none;
-      border-bottom: 1px solid ${theme.orange};
-      &::placeholder {
-        color: ${theme.orange};
-        position: relative;
-        transform: translateY(-20px);
-      }
-    }
-  }
-
-  .email,
-  .pwd {
-    position: relative;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    color: ${theme.formGray};
-    font-weight: lighter;
-    transition: 0.5s;
-  }
-
-  span {
-    text-align: center;
-  }
-`
-
-const HaveAccount = styled.p`
-  display: inline-block;
-  width: 100%;
-  margin: 30px 0 15px 0;
-
-  text-decoration: none;
-  text-align: center;
-  color: ${theme.formGray};
-  font-weight: lighter;
-  transition: 0.5s;
-
-  &:hover {
-    color: ${theme.orange};
-  }
-`
-
-const IncorrectBadge = styled.p`
-  margin-left: 30px;
-  margin-bottom: 20px;
-  color: ${theme.errorRed};
-`
-
-const SignUpButton = styled.div`
-  display: inline-block;
-  width: 100%;
-  margin-top: 25px;
-  text-align: center;
-`
-
-const SignUpForm = () => {
+const SignUpForm: React.FC = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [incorrectData, setIncorrectData] = useState('')
+  const theme: any = useTheme()
 
   useEffect(() => {
     if (localStorage.getItem('auth')) {
@@ -96,7 +22,7 @@ const SignUpForm = () => {
     }
   }, [navigate])
 
-  const handleClick = async () => {
+  const handleSubmit = async () => {
     if (!/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email)) {
       setIncorrectData('Incorrect email')
       return
@@ -113,11 +39,12 @@ const SignUpForm = () => {
     }
 
     try {
+      const requestHeaders: HeadersInit = new Headers()
+      requestHeaders.set('Content-Type', 'application/json;charset=utf-8')
+
       const response = await fetch('http://localhost:8080/post/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-        },
+        headers: requestHeaders,
         body: JSON.stringify({
           username: email,
           password,
@@ -139,9 +66,9 @@ const SignUpForm = () => {
   }
 
   return (
-    <Form>
+    <Form theme={theme} onSubmit={handleSubmit}>
       <h2>Create your account</h2>
-      {incorrectData && <IncorrectBadge>{incorrectData}</IncorrectBadge>}
+      {incorrectData && <IncorrectBadge theme={theme}>{incorrectData}</IncorrectBadge>}
       <input type='text' className='email' placeholder='EMAIL' onChange={event => setEmail(event.target.value)} />
       <br />
       <input
@@ -159,12 +86,12 @@ const SignUpForm = () => {
       />
 
       <NavLink to='/signin' className='link'>
-        <HaveAccount>Already have an account?</HaveAccount>
+        <HaveAccount theme={theme}>Already have an account?</HaveAccount>
       </NavLink>
       <br />
-      <SignUpButton>
-        <Button onClick={handleClick}>Sign Up</Button>
-      </SignUpButton>
+      <SignButton>
+        <Button onClick={handleSubmit}>Sign Up</Button>
+      </SignButton>
     </Form>
   )
 }

@@ -1,24 +1,24 @@
 import React from 'react'
 import styled from '@emotion/styled'
+import { useTheme } from '@emotion/react'
 import { NavLink } from 'react-router-dom'
 
-import theme from '../../themes/theme'
+import { Colors, Question } from '../../utils/types'
 
 const Container = styled.div`
   margin: 0 auto;
   padding: 1rem 0;
-  background-color: #fff;
+  background-color: ${({ theme }: { theme: Colors }) => theme.background};
   border-radius: 0.5rem;
 
   h3 {
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid ${theme.primary};
+    border-bottom: 1px solid ${({ theme }: { theme: Colors }) => theme.primary};
     cursor: pointer;
-    transition: 0.3s color;
 
     &:hover {
-      color: ${theme.orange};
+      color: ${({ theme }: { theme: Colors }) => theme.secondary};
     }
   }
 
@@ -29,15 +29,21 @@ const Container = styled.div`
   }
 `
 
-const QuestionPreview = ({ question }) => {
+const QuestionPreview: React.FC<QuestionPreviewProps> = ({ question }) => {
+  const theme: any = useTheme()
+
   return (
-    <Container>
+    <Container theme={theme}>
       <NavLink to={`/questions/${question.id}`}>
         <h3>{question.shortcontent}</h3>
       </NavLink>
       <p>{question.content}</p>
     </Container>
   )
+}
+
+type QuestionPreviewProps = {
+  question: Question
 }
 
 export default QuestionPreview
