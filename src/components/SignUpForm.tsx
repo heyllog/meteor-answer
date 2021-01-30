@@ -22,7 +22,9 @@ const SignUpForm: React.FC = () => {
     }
   }, [navigate])
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault()
+
     if (!/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email)) {
       setIncorrectData('Incorrect email')
       return
